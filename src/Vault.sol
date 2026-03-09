@@ -39,7 +39,9 @@ Transactions public transaction;
     error NotAnOwner();
 
 
-    constructor(address[] memory _owners, uint256 _threshold) payable {
+    constructor(address transactionAddr, address merkleAddr, address[] memory _owners, uint256 _threshold) payable {
+        transaction = Transactions(payable(transactionAddr)); 
+        merkle = Merkle(merkleAddr);
         if(_owners.length == 0) revert NoOwners();
         threshold = _threshold;
 
@@ -50,6 +52,10 @@ Transactions public transaction;
             owners.push(o);
         }
         totalVaultValue = msg.value;
+    }
+
+    function setTransactionsAddr(address _address)public {
+        transaction = Transactions(payable(_address));
     }
 
     receive() external payable {

@@ -9,7 +9,7 @@ import {console} from "forge-std/console.sol";
 
 contract EvictionVaultTest is Test {
     EvictionVault public evictionVault;
-    Transactions public transactions;
+    Transactions public transaction;
     Merkle public merkle;
 
     address public owner1;
@@ -36,9 +36,12 @@ contract EvictionVaultTest is Test {
 
         vm.deal(owner1, 100 ether);
         vm.startPrank(owner1);
-        evictionVault = new EvictionVault{value: 20}(owners, 3);
-        transactions = new Transactions(owners, 3);
         merkle = new Merkle();
+        transaction = new Transactions(zeroAddress, address(merkle), owners, 3);
+        evictionVault = new EvictionVault{value: 20}(zeroAddress, address(merkle), owners, 3);
+        evictionVault.setTransactionsAddr(address(transaction));
+        
+       
         vm.stopPrank();
 
         console.log("owner1 address", owner1);
@@ -70,13 +73,13 @@ contract EvictionVaultTest is Test {
 
         vm.expectRevert(InsufficientBalance.selector);
         vm.prank(owner2);
-        evictionVault.withdraw(20 ether);
+        evictionVault.withdraw(20);
 
         uint owner2BalBefore = owner2.balance;
-        evictionVault.withdraw(4 ether);
+        evictionVault.withdraw(4);
         uint owner2BalAfter = owner2.balance;
-        assertEq(evictionVault.balances(owner2), 6 ether);
-        assertEq(owner2BalAfter-owner2BalBefore, 4 ether);
+        assertEq(evictionVault.balances(owner2), 6);
+        assertEq(owner2BalAfter-owner2BalBefore, 4);
 
     }
 }

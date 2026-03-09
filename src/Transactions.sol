@@ -31,7 +31,8 @@ contract Transactions is EvictionVault{
     error VaultIsPaused();
     error NotOwner();
 
-constructor(address[] memory _owners, uint256 _threshold)EvictionVault(_owners, _threshold) {}
+constructor(address transactionAddr, address merkleAddr, address[] memory _owners, uint256 _threshold)EvictionVault(transactionAddr, merkleAddr, _owners, _threshold) {}
+
 
     function submitTransaction(address to, uint256 value, bytes calldata data) external {
         if(paused) revert VaultIsPaused();
